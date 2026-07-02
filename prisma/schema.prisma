@@ -1,0 +1,154 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String
+  role         Role     @default(VIEWER)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  dailyEntries DailyEntry[]
+  auditLogs    AuditLog[]
+
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  SUPERVISOR
+  VIEWER
+}
+
+model Line {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  dailyEntries DailyEntry[]
+
+  @@map("lines")
+}
+
+model Part {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  netWeight Float?
+  unitCost  Float    @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  dailyEntries   DailyEntry[]
+  materialChecks MaterialCheck[]
+
+  @@map("parts")
+}
+
+model DefectType {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  category    String?
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  rejections Rejection[]
+
+  @@map("defect_types")
+}
+
+model DailyEntry {
+  id          String   @id @default(cuid())
+  date        DateTime @db.Date
+  lineId      String
+  partId      String
+  producedQty Int
+  notes       String?
+  enteredById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  line        Line       @relation(fields: [lineId], references: [id])
+  part        Part       @relation(fields: [partId], references: [id])
+  enteredBy   User       @relation(fields: [enteredById], references: [id])
+  rejections  Rejection[]
+
+  @@unique([date, lineId, partId])
+  @@index([date])
+  @@index([lineId])
+  @@index([date, lineId])
+  @@map("daily_entries")
+}
+
+enum EntryType {
+  REJECTION
+  REWORK
+}
+
+model Rejection {
+  id           String    @id @default(cuid())
+  dailyEntryId String
+  defectTypeId String
+  qty          Int
+  unitCost     Float
+  totalCost    Float
+  type         EntryType @default(REJECTION)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  dailyEntry DailyEntry @relation(fields: [dailyEntryId], references: [id], onDelete: Cascade)
+  defectType DefectType @relation(fields: [defectTypeId], references: [id])
+
+  @@index([defectTypeId])
+  @@index([dailyEntryId])
+  @@map("rejections")
+}
+
+model MaterialCheck {
+  id             String   @id @default(cuid())
+  date           DateTime @db.Date
+  partId         String
+  expectedWeight Float
+  actualWeight   Float
+  variance       Float
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  part Part @relation(fields: [partId], references: [id])
+
+  @@index([date])
+  @@map("material_checks")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String
+  action     String
+  entityType String
+  entityId   String
+  oldValue   Json?
+  newValue   Json?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
