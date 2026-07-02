@@ -27,6 +27,7 @@ type PeriodData = {
     rework: number;
     cost: number;
     rejectionRate: number | null;
+    reworkRate: number | null;
   }>;
   anomalies: Array<{ date: string; rejectionRate: number; threshold: number }>;
   entryCount: number;
