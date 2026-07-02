@@ -61,6 +61,7 @@ export async function GET(req: NextRequest) {
     lineName,
     ...data,
     rejectionRate: data.produced > 0 ? (data.rejections / data.produced) * 100 : null,
+    reworkRate: data.produced > 0 ? (data.rework / data.produced) * 100 : null,
   })).sort((a, b) => (b.rejectionRate ?? 0) - (a.rejectionRate ?? 0));
 
   // Detect anomalies — look at 30-day rolling window
