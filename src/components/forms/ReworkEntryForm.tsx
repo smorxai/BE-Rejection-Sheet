@@ -37,6 +37,7 @@ export function ReworkEntryForm() {
   const [lineId, setLineId] = useState(searchParams.get("lineId") ?? "");
   const [partId, setPartId] = useState(searchParams.get("partId") ?? "");
   const [producedQty, setProducedQty] = useState("");
+  const [productNumber, setProductNumber] = useState("");
   const [notes, setNotes] = useState("");
   const [rows, setRows] = useState<ReworkRow[]>([
     { id: crypto.randomUUID(), defectTypeId: "", qty: "" },
@@ -51,11 +52,7 @@ export function ReworkEntryForm() {
     if (paramDate) {
       setDate(paramDate);
     } else {
-      const t = new Date();
-      const yyyy = t.getFullYear();
-      const mm = String(t.getMonth() + 1).padStart(2, "0");
-      const dd = String(t.getDate()).padStart(2, "0");
-      setDate(`${yyyy}-${mm}-${dd}`);
+      setDate(new Intl.DateTimeFormat("en-CA").format(new Date()));
     }
   }, [searchParams]);
 
@@ -183,7 +180,7 @@ export function ReworkEntryForm() {
     <form onSubmit={handleSubmit} className="space-y-6">
       <Card>
         <CardHeader><CardTitle>Rework Entry Details</CardTitle></CardHeader>
-        <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <div className="space-y-2">
             <Label htmlFor="date">Date *</Label>
             <Input id="date" type="date" value={date} max={date || undefined}
@@ -201,15 +198,20 @@ export function ReworkEntryForm() {
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Part / Machine *</Label>
+            <Label>Process Type *</Label>
             <Select value={partId} onValueChange={setPartId}>
-              <SelectTrigger><SelectValue placeholder="Select part..." /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder="Select process type..." /></SelectTrigger>
               <SelectContent>
                 {parts.map((p) => (
                   <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="productNumber">Product Number</Label>
+            <Input id="productNumber" value={productNumber}
+              onChange={(e) => setProductNumber(e.target.value)} placeholder="e.g. PN-001, Batch-42" />
           </div>
           <div className="space-y-2">
             <Label htmlFor="produced">Produced Qty {linkedEntry && <span className="text-xs text-muted-foreground">(from rejection entry)</span>}</Label>

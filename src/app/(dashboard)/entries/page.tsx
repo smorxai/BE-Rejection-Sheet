@@ -31,6 +31,7 @@ interface Entry {
   line: { name: string };
   part: { name: string; unitCost: number };
   producedQty: number;
+  productNumber: string | null;
   notes: string | null;
   enteredBy: { name: string | null; email: string };
   rejections: RejectionRow[];
@@ -81,7 +82,8 @@ function DetailDialog({ entry, open, onClose, onEdit }: {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
           {[
             { label: "Line", value: entry.line.name },
-            { label: "Part", value: entry.part.name },
+            { label: "Process Type", value: entry.part.name },
+            { label: "Product No.", value: entry.productNumber ?? "—" },
             { label: "Produced", value: entry.producedQty.toLocaleString("en-IN") },
             { label: "Rej Rate", value: formatPercent(rejRate) },
           ].map((s) => (
@@ -562,7 +564,7 @@ export default function EntriesPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b bg-gray-50 text-muted-foreground">
-                    {["Date", "Line", "Part", "Produced", "Rejected", "Rej Rate", "Cost Loss", "Top Defect", ""].map((h) => (
+                    {["Date", "Line", "Process Type", "Product No.", "Produced", "Rejected", "Rej Rate", "Cost Loss", "Top Defect", ""].map((h) => (
                       <th key={h} className={`px-4 py-3 font-medium whitespace-nowrap ${
                         ["Produced", "Rejected", "Rej Rate", "Cost Loss", ""].includes(h) ? "text-right" : "text-left"
                       }`}>{h}</th>
@@ -601,6 +603,7 @@ export default function EntriesPage() {
                               <Badge variant="outline" className="font-normal">{entry.line.name}</Badge>
                             </td>
                             <td className="px-4 py-3 text-gray-700">{entry.part.name}</td>
+                            <td className="px-4 py-3 text-gray-500 font-mono text-xs">{entry.productNumber ?? <span className="text-gray-300">—</span>}</td>
                             <td className="px-4 py-3 text-right">{entry.producedQty.toLocaleString("en-IN")}</td>
                             <td className="px-4 py-3 text-right font-medium text-red-600">
                               {rejQty > 0 ? rejQty : <span className="text-gray-300">—</span>}
@@ -642,7 +645,7 @@ export default function EntriesPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b bg-gray-50 text-muted-foreground">
-                    {["Date", "Line", "Part", "Produced", "Rework Qty", "Rework Rate", "Top Rework Defect", ""].map((h) => (
+                    {["Date", "Line", "Process Type", "Product No.", "Produced", "Rework Qty", "Rework Rate", "Top Rework Defect", ""].map((h) => (
                       <th key={h} className={`px-4 py-3 font-medium whitespace-nowrap ${
                         ["Produced", "Rework Qty", "Rework Rate", ""].includes(h) ? "text-right" : "text-left"
                       }`}>{h}</th>
@@ -681,6 +684,7 @@ export default function EntriesPage() {
                               <Badge variant="outline" className="font-normal">{entry.line.name}</Badge>
                             </td>
                             <td className="px-4 py-3 text-gray-700">{entry.part.name}</td>
+                            <td className="px-4 py-3 text-gray-500 font-mono text-xs">{entry.productNumber ?? <span className="text-gray-300">—</span>}</td>
                             <td className="px-4 py-3 text-right">{entry.producedQty.toLocaleString("en-IN")}</td>
                             <td className="px-4 py-3 text-right font-medium text-orange-600">
                               {rewQty > 0 ? rewQty : <span className="text-gray-300">—</span>}

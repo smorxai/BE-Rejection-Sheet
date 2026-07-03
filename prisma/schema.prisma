@@ -77,9 +77,10 @@ model DailyEntry {
   date        DateTime @db.Date
   lineId      String
   partId      String
-  producedQty Int
-  notes       String?
-  enteredById String
+  producedQty   Int
+  productNumber String?
+  notes         String?
+  enteredById   String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

@@ -20,7 +20,7 @@ const navItems = [
 
 const adminItems = [
   { href: "/admin/lines", label: "Lines", icon: Factory },
-  { href: "/admin/parts", label: "Parts", icon: Package },
+  { href: "/admin/parts", label: "Process Types", icon: Package },
   { href: "/admin/defects", label: "Defect Types", icon: AlertTriangle },
   { href: "/admin/users", label: "Users", icon: Users },
 ];

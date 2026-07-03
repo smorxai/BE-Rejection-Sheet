@@ -80,14 +80,14 @@ export default function AdminPartsPage() {
     <div className="max-w-3xl mx-auto space-y-6">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Parts / Machine Types</CardTitle>
-          <Button size="sm" onClick={openNew}><Plus className="h-4 w-4 mr-1" /> Add Part</Button>
+          <CardTitle>Process Types</CardTitle>
+          <Button size="sm" onClick={openNew}><Plus className="h-4 w-4 mr-1" /> Add Process Type</Button>
         </CardHeader>
         <CardContent>
           {loading ? (
             <p className="text-sm text-muted-foreground">Loading...</p>
           ) : parts.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-8 text-center">No parts yet.</p>
+            <p className="text-sm text-muted-foreground py-8 text-center">No process types yet.</p>
           ) : (
             <div className="space-y-2">
               {parts.map((p) => (
@@ -121,11 +121,11 @@ export default function AdminPartsPage() {
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>{editing ? "Edit Part" : "Add Part"}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{editing ? "Edit Process Type" : "Add Process Type"}</DialogTitle></DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <Label>Part Name *</Label>
-              <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="e.g. Inlet Nut, Collar 680..." autoFocus />
+              <Label>Process Type Name *</Label>
+              <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="e.g. CNC Turning, TROB Assembly..." autoFocus />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">

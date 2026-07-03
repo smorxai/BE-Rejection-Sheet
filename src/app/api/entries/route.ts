@@ -17,6 +17,7 @@ const createSchema = z.object({
   lineId: z.string().min(1),
   partId: z.string().min(1),
   producedQty: z.number().int().min(0),
+  productNumber: z.string().optional(),
   notes: z.string().optional(),
   rejections: z.array(rejectionSchema).min(1),
 });
@@ -71,7 +72,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
 
-  const { date, lineId, partId, producedQty, notes, rejections } = parsed.data;
+  const { date, lineId, partId, producedQty, productNumber, notes, rejections } = parsed.data;
   const entryDate = startOfDay(parseISO(date));
 
   // Check for duplicate entry
@@ -92,6 +93,7 @@ export async function POST(req: NextRequest) {
       lineId,
       partId,
       producedQty,
+      productNumber: productNumber ?? null,
       notes,
       enteredById: session.user.id,
       rejections: {
